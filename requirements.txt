@@ -1,0 +1,2 @@
+memory_profiler==0.52.0
+tensorflow==1.7
