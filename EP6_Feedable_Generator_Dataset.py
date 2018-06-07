@@ -68,10 +68,10 @@ train_dataset = tf.data.Dataset.from_generator(input_train_gen_fn, tf.float32)
 label_dataset = tf.data.Dataset.from_generator(input_label_gen_fn, tf.float32)
 
 # Create Dataset
-dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
+dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH).prefetch(buffer_size=500)
 
 # Create Dataset Iterator
-iterator = dataset.make_one_shot_iterator()
+iterator = dataset.make_initializable_iterator()
 
 # Create features and labels
 features, labels = iterator.get_next()
@@ -80,7 +80,7 @@ features, labels = iterator.get_next()
                                                      return_elements=['loss:0', 'init', 'init_1', 'Adam'])
 
 with tf.train.MonitoredTrainingSession(scaffold=tf.train.Scaffold(init_op=tf.group(gi, li))) as sess:
-    # sess.run(tf.group(gi, li))
+    sess.run(iterator.initializer)
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
     while not sess.should_stop():
         _, c = sess.run([training_op, loss_op])

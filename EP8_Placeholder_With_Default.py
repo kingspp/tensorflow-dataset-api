@@ -5,7 +5,7 @@
 | **@version:** v0.0.1
 |
 | **Description:**
-| Basic Dataset
+| Basic Placeholders
 | **Sphinx Documentation Status:** Complete
 |
 ..todo::
@@ -25,10 +25,14 @@ DISPLAY_STEP = 1
 
 mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
+# Create Placeholders
+
 # Create Dataset
 features_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.images)
 label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 dataset = tf.data.Dataset.zip((features_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
+
+
 
 # Create Dataset Iterator
 iterator = dataset.make_one_shot_iterator()
@@ -36,6 +40,8 @@ iterator = dataset.make_one_shot_iterator()
 # Create features and labels
 features, labels = iterator.get_next()
 
+features_placeholder = tf.placeholder_with_default(features, [None, mnist.train.images.shape[-1]])
+labels_placeholder = tf.placeholder_with_default(labels, [None, mnist.train.labels.shape[-1]])
 
 # Deeplearning Model
 def nn_model(features, labels):
@@ -50,13 +56,17 @@ def nn_model(features, labels):
 
 
 # Create elements from iterator
-training_op, loss_op = nn_model(features=features, labels=labels)
+training_op, loss_op = nn_model(features=features_placeholder, labels=labels_placeholder)
 init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
+
+# Training without Feed Dict
 with tf.train.MonitoredTrainingSession() as sess:
     sess.run(init_op)
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
     while not sess.should_stop():
+        # print(sess.run(features).shape)
+        # print(sess.run(labels).shape)
         _, c = sess.run([training_op, loss_op])
         avg_cost += c / total_batches
         if batch_id == total_batches:
@@ -68,3 +78,25 @@ with tf.train.MonitoredTrainingSession() as sess:
     print("Optimization Finished!")
 
 print('Total Time Elapsed: {} secs'.format(time.time()-start))
+
+# Training with Feed Dict
+with tf.Session() as sess:
+    sess.run(init_op)
+    total_batches = int(mnist.train.num_examples / BATCH_SIZE)
+    for epoch in range(EPOCH):
+        avg_cost = 0.0
+        # Loop over all batches
+        for i in range(total_batches):
+            batch_x, batch_y = mnist.train.next_batch(BATCH_SIZE)
+            _, c = sess.run([training_op, loss_op], feed_dict={features_placeholder: batch_x,
+                                                               labels_placeholder: batch_y})
+            # Compute average loss
+            avg_cost += c / total_batches
+        # Display logs per epoch step
+        if epoch % DISPLAY_STEP == 0:
+            print("Epoch:", '%04d' % (epoch + 1), "cost={:.9f}".format(avg_cost))
+    print("Optimization Finished!")
+
+
+
+print('Total Time Elapsed: {} secs'.format(time.time() - start))
