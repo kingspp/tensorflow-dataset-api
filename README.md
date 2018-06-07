@@ -8,3 +8,12 @@ Examples demonstrating dataset api capabilities.
 4. [Generator Dataset](EP1_Generator_Dataset.py)
 5. [Feedable Iterator](EP1_Feedable_Iterator.py)
 6. [Feedable Generator Dataset](EP1_Feedable_Generator_Dataset.py)
+7. [Feedable Generator Feedable Iterator Dataset](EP1_Feedable_Generator_Feedable_Iterator_Dataset.py)
+
+
+#### Note:
+
+If facing issues in downloading the MNIST Dataset, use below bash command to update required certificates
+```bash
+/Applications/Python\ 3.6/Install\ Certificates.command
+```
