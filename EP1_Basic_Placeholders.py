@@ -10,7 +10,9 @@
 |
 ..todo::
 """
+import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 

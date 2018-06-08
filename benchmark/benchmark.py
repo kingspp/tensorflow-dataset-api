@@ -48,6 +48,9 @@ class BenchmarkStats(object):
         self.monitor_statistics = OrderedDict()
         self.timestamp = generate_timestamp()
 
+    def get_timestamp(self):
+        return self.timestamp
+
     def get_monitor_statistics(self):
         return self.monitor_statistics
 
@@ -97,7 +100,6 @@ class BenchmarkUtil(object):
         self.model_name = model_name
         self.deployed_monitors = monitors
         self.monitors = None
-        self.timestamp = generate_timestamp()
         self.benchmark_interval = benchmark_interval
         self.pid = None
         self.stats_save_path = stats_save_path
@@ -186,9 +188,10 @@ class BenchmarkUtil(object):
                 p.join()
                 b_stats.set_monitor_statistics(self._collect_monitor_stats())
                 b_stats.set_total_elapsed_time(time.time() - start)
-                json.dump(b_stats.info(), open(self.stats_save_path + '/benchmark_training.json', 'w'), indent=2)
+                json.dump(b_stats.info(),
+                          open(self.stats_save_path + '/benchmark_{}.json'.format(b_stats.get_timestamp()), 'w'), indent=2)
                 print('Benchmark Util - Training completed successfully. Results stored at: {}'.format(
-                    self.stats_save_path + '/benchmark_training.json'))
+                    self.stats_save_path + '/benchmark_{}.json'.format(b_stats.get_timestamp())))
             except ValueError as ve:
                 logger.error('Value Error - {}'.format(ve))
                 raise Exception('Value Error', ve)
