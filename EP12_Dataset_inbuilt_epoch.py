@@ -14,6 +14,7 @@ butil = BenchmarkUtil(model_name='EP12 Dataset Inbuilt Epoch {}'.format(sys.argv
                       monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
 
+@butil.monitor
 def main():
     # Imports
     import tensorflow as tf
@@ -68,7 +69,6 @@ def main():
             break
         avg_cost += c / total_batches
         if batch_id == total_batches:
-
             print("Epoch:", '%04d' % (epoch_id + 1), "cost={:.9f}".format(avg_cost))
             batch_id, avg_cost, cost = 0, 0, []
             epoch_id += 1
