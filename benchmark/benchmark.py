@@ -51,6 +51,9 @@ class BenchmarkStats(object):
     def get_timestamp(self):
         return self.timestamp
 
+    def get_benchmark_name(self):
+        return self.benchmark_name
+
     def get_monitor_statistics(self):
         return self.monitor_statistics
 
@@ -188,10 +191,11 @@ class BenchmarkUtil(object):
                 p.join()
                 b_stats.set_monitor_statistics(self._collect_monitor_stats())
                 b_stats.set_total_elapsed_time(time.time() - start)
+                fname = self.stats_save_path + '/benchmark_{}_{}.json'.format(
+                              b_stats.get_benchmark_name().replace(' ', '_'), b_stats.get_timestamp())
                 json.dump(b_stats.info(),
-                          open(self.stats_save_path + '/benchmark_{}.json'.format(b_stats.get_timestamp()), 'w'), indent=2)
-                print('Benchmark Util - Training completed successfully. Results stored at: {}'.format(
-                    self.stats_save_path + '/benchmark_{}.json'.format(b_stats.get_timestamp())))
+                          open(fname, 'w'), indent=2)
+                print('Benchmark Util - Training completed successfully. Results stored at: {}'.format(fname))
             except ValueError as ve:
                 logger.error('Value Error - {}'.format(ve))
                 raise Exception('Value Error', ve)

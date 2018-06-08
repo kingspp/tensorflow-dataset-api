@@ -12,14 +12,18 @@
 ..todo::
 """
 import os
+import sys
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+if len(sys.argv) <= 1:
+    sys.argv.append('cpu')
+USE_GPU = True if sys.argv[1] == 'gpu' else False
+os.environ["CUDA_VISIBLE_DEVICES"] = "0" if USE_GPU else ""
+
 from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
-butil = BenchmarkUtil(model_name='Feedable Dataset', stats_save_path='/tmp/stats/',
+butil = BenchmarkUtil(model_name='EP3 Feedable Dataset {}'.format(sys.argv[1]), stats_save_path='/tmp/stats/',
                       monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
-
 
 @butil.monitor
 def main():
