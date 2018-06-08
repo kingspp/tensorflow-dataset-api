@@ -32,8 +32,6 @@ features_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.images)
 label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 dataset = tf.data.Dataset.zip((features_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
 
-
-
 # Create Dataset Iterator
 iterator = dataset.make_one_shot_iterator()
 
@@ -42,6 +40,7 @@ features, labels = iterator.get_next()
 
 features_placeholder = tf.placeholder_with_default(features, [None, mnist.train.images.shape[-1]])
 labels_placeholder = tf.placeholder_with_default(labels, [None, mnist.train.labels.shape[-1]])
+
 
 # Deeplearning Model
 def nn_model(features, labels):
@@ -59,9 +58,9 @@ def nn_model(features, labels):
 training_op, loss_op = nn_model(features=features_placeholder, labels=labels_placeholder)
 init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-
 # Training without Feed Dict
-with tf.train.MonitoredTrainingSession() as sess:
+sess = tf.train.MonitoredTrainingSession()
+try:
     sess.run(init_op)
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
     while not sess.should_stop():
@@ -75,9 +74,11 @@ with tf.train.MonitoredTrainingSession() as sess:
             batch_id, avg_cost, cost = 0, 0, []
             epoch_id += 1
         batch_id += 1
+except tf.errors.OutOfRangeError:
     print("Optimization Finished!")
 
-print('Total Time Elapsed: {} secs'.format(time.time()-start))
+
+print('Total Time Elapsed: {} secs'.format(time.time() - start))
 
 # Training with Feed Dict
 with tf.Session() as sess:
@@ -96,7 +97,5 @@ with tf.Session() as sess:
         if epoch % DISPLAY_STEP == 0:
             print("Epoch:", '%04d' % (epoch + 1), "cost={:.9f}".format(avg_cost))
     print("Optimization Finished!")
-
-
 
 print('Total Time Elapsed: {} secs'.format(time.time() - start))

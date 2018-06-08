@@ -19,7 +19,7 @@ import time
 start = time.time()
 
 # Global Variables
-EPOCH = 10
+EPOCH = 100
 BATCH_SIZE = 32
 DISPLAY_STEP = 1
 
@@ -67,4 +67,4 @@ with tf.train.MonitoredTrainingSession() as sess:
         batch_id += 1
     print("Optimization Finished!")
 
-print('Total Time Elapsed: {} secs'.format(time.time()-start))
+print('Total Time Elapsed: {} secs'.format(time.time() - start))

@@ -1,11 +1,25 @@
 # -*- coding: utf-8 -*-
 """
+| **@created on:** 08/06/18,
+| **@author:** prathyushsp,
+| **@version:** v0.0.1
+|
+| **Description:**
+| 
+|
+| **Sphinx Documentation Status:** --
+|
+..todo::
+"""
+
+# -*- coding: utf-8 -*-
+"""
 | **@created on:** 06/06/18,
 | **@author:** Prathyush SP,
 | **@version:** v0.0.1
 |
 | **Description:**
-| Feedable Iterator Dataset
+| Basic Dataset
 | **Sphinx Documentation Status:** Complete
 |
 ..todo::
@@ -25,7 +39,8 @@ DISPLAY_STEP = 1
 
 mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 
-# Create Train Dataset
+# Create Dataset
+# Create Dataset
 train_features_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.images)
 train_label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 train_dataset = tf.data.Dataset.zip((train_features_dataset, train_label_dataset)).repeat(EPOCH).batch(BATCH_SIZE)
@@ -37,15 +52,16 @@ valid_dataset = tf.data.Dataset.zip((valid_features_dataset, valid_label_dataset
     batch_size=mnist.train.num_examples)
 
 # Create Dataset Iterator
-handle = tf.placeholder(tf.string, shape=[])
-training_iterator = train_dataset.make_one_shot_iterator()
-validation_iterator = valid_dataset.make_one_shot_iterator()
-iterator = tf.data.Iterator.from_string_handle(
-    handle, train_dataset.output_types, train_dataset.output_shapes)
+iterator = tf.data.Iterator.from_structure(train_dataset.output_types,
+                                           train_dataset.output_shapes)
 
 # Create features and labels
 features, labels = iterator.get_next()
 
+
+# Create Initialization Op
+train_init_op = iterator.make_initializer(train_dataset)
+valid_init_op = iterator.make_initializer(valid_dataset)
 
 # Deeplearning Model
 def nn_model(features, labels):
@@ -65,15 +81,11 @@ init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initial
 
 with tf.train.MonitoredTrainingSession() as sess:
     sess.run(init_op)
-
-    # Create Handles
-    training_handle = sess.run(training_iterator.string_handle())
-    validation_handle = sess.run(validation_iterator.string_handle())
-
+    sess.run(train_init_op)
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
     while True:
         try:
-            _, c = sess.run([training_op, loss_op], feed_dict={handle: training_handle})
+            _, c = sess.run([training_op, loss_op])
             avg_cost += c / total_batches
             if batch_id == total_batches:
                 if epoch_id % DISPLAY_STEP == 0:
@@ -84,9 +96,11 @@ with tf.train.MonitoredTrainingSession() as sess:
         except tf.errors.OutOfRangeError:
             break
     print("Optimization Finished!")
+
+    sess.run(valid_init_op)
     while True:
         try:
-            c = sess.run(loss_op, feed_dict={handle: validation_handle})
+            c = sess.run(loss_op)
             avg_cost += c / total_batches
         except tf.errors.OutOfRangeError:
             break
