@@ -75,7 +75,10 @@ def main():
     training_op, loss_op = nn_model(features=features, labels=labels)
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-    with tf.train.MonitoredTrainingSession() as sess:
+    config_proto = tf.ConfigProto(log_device_placement=True)
+    config_proto.gpu_options.allow_growth = True
+
+    with tf.train.MonitoredTrainingSession(config=config_proto) as sess:
         sess.run(init_op)
 
         # Create Handles
