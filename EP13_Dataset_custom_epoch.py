@@ -22,7 +22,7 @@ def main():
 
     start = time.time()
     # Global Variables
-    EPOCH = 2
+    EPOCH = 100
     BATCH_SIZE = 32
 
     mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)

@@ -35,7 +35,7 @@ def main():
     start = time.time()
 
     # Global Variables
-    EPOCH = 1
+    EPOCH = 100
     BATCH_SIZE = 32
     DISPLAY_STEP = 1
 
