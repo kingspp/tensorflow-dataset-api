@@ -20,7 +20,7 @@ import time
 start = time.time()
 
 # Global Variables
-EPOCH = 10
+EPOCH = 1
 BATCH_SIZE = 32
 DISPLAY_STEP = 1
 
@@ -32,7 +32,7 @@ labels_placeholder = tf.placeholder(mnist.train.labels.dtype, [None, mnist.train
 
 # Create Tensor slices from placeholders
 train_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder)
-label_dataset = tf.data.Dataset.from_tensor_slices(labels_placeholder)  # .map(lambda z: tf.one_hot(z, 10))
+label_dataset = tf.data.Dataset.from_tensor_slices(labels_placeholder)
 
 # Create Dataset
 dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
@@ -65,15 +65,27 @@ with tf.train.MonitoredTrainingSession() as sess:
     sess.run(iterator.initializer, feed_dict={features_placeholder: mnist.train.images,
                                               labels_placeholder: mnist.train.labels})
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
-    while not sess.should_stop():
-        _, c = sess.run([training_op, loss_op])
-        avg_cost += c / total_batches
-        if batch_id == total_batches:
-            if epoch_id % DISPLAY_STEP == 0:
-                print("Epoch:", '%04d' % (epoch_id + 1), "cost={:.9f}".format(avg_cost))
-            batch_id, avg_cost, cost = 0, 0, []
-            epoch_id += 1
-        batch_id += 1
-    print("Optimization Finished!")
+    try:
+        while True:
+            _, c = sess.run([training_op, loss_op])
+            avg_cost += c / total_batches
+            if batch_id == total_batches:
+                if epoch_id % DISPLAY_STEP == 0:
+                    print("Epoch:", '%04d' % (epoch_id + 1), "cost={:.9f}".format(avg_cost))
+                batch_id, avg_cost, cost = 0, 0, []
+                epoch_id += 1
+            batch_id += 1
+    except tf.errors.OutOfRangeError:
+        print("Optimization Finished!")
+
+    sess.run(iterator.initializer, feed_dict={features_placeholder: mnist.test.images,
+                                              labels_placeholder: mnist.test.labels})
+    total_batches, avg_cost = int(mnist.test.num_examples / BATCH_SIZE), 0.0
+    try:
+        while True:
+            _, c = sess.run([training_op, loss_op])
+            avg_cost += c / total_batches
+    except tf.errors.OutOfRangeError:
+        print("Validation :", "cost={:.9f}".format(avg_cost))
 
 print('Total Time Elapsed: {} secs'.format(time.time() - start))

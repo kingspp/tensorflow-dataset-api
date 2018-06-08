@@ -19,7 +19,7 @@ import time
 start = time.time()
 
 # Global Variables
-EPOCH = 100
+EPOCH = 1
 BATCH_SIZE = 32
 DISPLAY_STEP = 1
 

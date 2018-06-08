@@ -17,3 +17,10 @@ If facing issues in downloading the MNIST Dataset, use below bash command to upd
 ```bash
 /Applications/Python\ 3.6/Install\ Certificates.command
 ```
+
+
+#### Choice of Benchmarks
+1. EP1
+2. EP3
+3. EP5
+4. EP11

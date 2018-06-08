@@ -28,7 +28,7 @@ mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
 # Create Dataset
 features_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.images)
 label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
-dataset = tf.data.Dataset.zip((features_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
+dataset = tf.data.Dataset.zip((features_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH).shuffle()
 
 # Create Dataset Iterator
 iterator = dataset.make_one_shot_iterator()

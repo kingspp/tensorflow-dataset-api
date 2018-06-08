@@ -19,7 +19,7 @@ import time
 start = time.time()
 
 # Global Variables
-EPOCH = 10
+EPOCH = 1
 BATCH_SIZE = 32
 DISPLAY_STEP = 1
 
@@ -33,7 +33,7 @@ label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 dataset = tf.data.Dataset.zip((features_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
 
 # Create Dataset Iterator
-iterator = dataset.make_one_shot_iterator()
+iterator = dataset.make_initializable_iterator()
 
 # Create features and labels
 features, labels = iterator.get_next()
@@ -61,11 +61,9 @@ init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initial
 # Training without Feed Dict
 sess = tf.train.MonitoredTrainingSession()
 try:
-    sess.run(init_op)
+    sess.run([init_op, iterator.initializer])
     batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
     while not sess.should_stop():
-        # print(sess.run(features).shape)
-        # print(sess.run(labels).shape)
         _, c = sess.run([training_op, loss_op])
         avg_cost += c / total_batches
         if batch_id == total_batches:
@@ -77,25 +75,18 @@ try:
 except tf.errors.OutOfRangeError:
     print("Optimization Finished!")
 
-
 print('Total Time Elapsed: {} secs'.format(time.time() - start))
 
 # Training with Feed Dict
 with tf.Session() as sess:
     sess.run(init_op)
-    total_batches = int(mnist.train.num_examples / BATCH_SIZE)
-    for epoch in range(EPOCH):
-        avg_cost = 0.0
-        # Loop over all batches
-        for i in range(total_batches):
-            batch_x, batch_y = mnist.train.next_batch(BATCH_SIZE)
-            _, c = sess.run([training_op, loss_op], feed_dict={features_placeholder: batch_x,
-                                                               labels_placeholder: batch_y})
-            # Compute average loss
-            avg_cost += c / total_batches
-        # Display logs per epoch step
-        if epoch % DISPLAY_STEP == 0:
-            print("Epoch:", '%04d' % (epoch + 1), "cost={:.9f}".format(avg_cost))
+    total_batches = int(mnist.test.num_examples / BATCH_SIZE)
+    avg_cost = 0.0
+    for i in range(total_batches):
+        batch_x, batch_y = mnist.test.next_batch(BATCH_SIZE)
+        _, c = sess.run([training_op, loss_op], feed_dict={features_placeholder: batch_x,
+                                                           labels_placeholder: batch_y})
+        avg_cost += c / total_batches
     print("Optimization Finished!")
 
 print('Total Time Elapsed: {} secs'.format(time.time() - start))
