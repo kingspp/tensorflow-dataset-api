@@ -13,22 +13,20 @@
 
 
 Benchmark Statistics:
-11.	Physical Memory Consumption - RAM	List[Float]	Max Physical Memory (RAM) consumed by the run in Mb/ GB - DONE
-12.	Physical Memory Consumption - GPU	List[Float]	Max Physical Memory (GPU) consumed by the run in Mb/ GB
-13.	Physical Processing Power Consumption	List[Float]	 Max Physical Power (CPU) consumed by the run in % - DONE
+1.	Physical Memory Consumption - RAM	List[Float]	Max Physical Memory (RAM) consumed by the run in Mb/ GB - DONE
+2.	Physical Memory Consumption - GPU	List[Float]	Max Physical Memory (GPU) consumed by the run in Mb/ GB
+3.	Physical Processing Power Consumption	List[Float]	 Max Physical Power (CPU) consumed by the run in % - DONE
 """
 
 import json
 from collections import OrderedDict
-import datetime
 from multiprocessing import Process
 from multiprocessing.managers import BaseManager
 import time
 import os
 import logging
-from benchmark.utils import DLTimer, generate_timestamp, TimeUtils
+from benchmark.utils import generate_timestamp
 from typeguard import typechecked
-import glob
 from functools import wraps
 
 logger = logging.getLogger(__name__)
@@ -42,10 +40,13 @@ class BenchmarkStats(object):
     | Benchmarking Statistics
     """
 
-    def __init__(self, process_name: str):  # pragma: no cover
-        self.process_name = process_name
+    def __init__(self, benchmark_name: str):  # pragma: no cover
+        self.benchmark_name = benchmark_name
+        self.function_name = None
+        self.function_annotations = None
         self.total_elapsed_time = None
         self.monitor_statistics = OrderedDict()
+        self.timestamp = generate_timestamp()
 
     def get_monitor_statistics(self):
         return self.monitor_statistics
@@ -59,8 +60,24 @@ class BenchmarkStats(object):
     def set_total_elapsed_time(self, t):
         self.total_elapsed_time = t
 
+    def get_function_name(self):
+        return self.function_name
+
+    def set_function_name(self, t):
+        self.function_name = t
+
+    def get_function_annotations(self):
+        return self.function_annotations
+
+    def set_function_annotations(self, t):
+        self.function_annotations = t
+
     def info(self):  # pragma: no cover
         return OrderedDict([
+            ('benchmark_name', self.benchmark_name),
+            ('timestamp', self.timestamp),
+            ('function_name', self.function_name),
+            ('function_annotations', self.function_annotations),
             ('total_elapsed_time (secs)', self.total_elapsed_time),
             ('monitor_statistics', self.monitor_statistics)
         ])
@@ -159,6 +176,8 @@ class BenchmarkUtil(object):
             manager = BaseManager()
             manager.start()
             b_stats = manager.BenchmarkStats(self.model_name)
+            b_stats.set_function_name(f.__name__)
+            b_stats.set_function_annotations(f.__annotations__)
             try:
                 p = Process(target=f, args=())
                 p.start()
