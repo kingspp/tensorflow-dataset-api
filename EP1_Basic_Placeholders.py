@@ -45,7 +45,7 @@ def main():
         fc2 = tf.layers.dense(fc1, 50)
         fc2 = tf.layers.dropout(fc2)
         fc3 = tf.layers.dense(fc2, 10)
-        loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels, logits=fc3))
+        loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
         optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
         return optimizer, loss
 
@@ -53,7 +53,10 @@ def main():
     training_op, loss_op = nn_model(features=features_placeholder, labels=labels_placeholder)
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-    with tf.Session() as sess:
+    config_proto = tf.ConfigProto(log_device_placement=True)
+    config_proto.gpu_options.allow_growth = True
+
+    with tf.Session(config=config_proto) as sess:
         sess.run(init_op)
         total_batches = int(mnist.train.num_examples / BATCH_SIZE)
         for epoch in range(EPOCH):
