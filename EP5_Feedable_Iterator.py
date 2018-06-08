@@ -64,9 +64,12 @@ def main():
         fc2 = tf.layers.dense(fc1, 50)
         fc2 = tf.layers.dropout(fc2)
         fc3 = tf.layers.dense(fc2, 10)
-        loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels, logits=fc3))
+        loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
         optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
         return optimizer, loss
+
+    tr_handle = training_iterator.string_handle()
+    vr_handle = validation_iterator.string_handle()
 
     # Create elements from iterator
     training_op, loss_op = nn_model(features=features, labels=labels)
@@ -76,8 +79,8 @@ def main():
         sess.run(init_op)
 
         # Create Handles
-        training_handle = sess.run(training_iterator.string_handle())
-        validation_handle = sess.run(validation_iterator.string_handle())
+        training_handle = sess.run(tr_handle)
+        validation_handle = sess.run(vr_handle)
 
         batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
         while True:
