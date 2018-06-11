@@ -65,7 +65,7 @@ class Plotter(object):
         return plt
 
     def plot_all(self):
-        plt.figure(figsize=(15,10))
+        plt.figure(figsize=(15, 10))
         plt.subplot(221)
         self.plot_cpu_values()
         plt.subplot(222)
@@ -82,23 +82,32 @@ class Plotter(object):
         plt.close()
 
 
-GLOBAL_PATH = '/Users/prathyushsp/Development/stats/'
+json_root = "/Users/prathyushsp/Downloads/logs_and_stats/stats/"
 only_cpu_data_dict = {
-    'EP1 Basic Placeholder': '/Users/prathyushsp/Development/stats/benchmark_20180608_134134_basic_placeholders_cpu.json',
-    'EP3 Feedable Dataset': '/Users/prathyushsp/Development/stats/benchmark_ep3_cpu.json',
-    'EP5 Feedable Iterator': '/Users/prathyushsp/Development/stats/benchmark_20180608_144702_ep5_cpu.json',
-    'EP11 ReInitializable Iterator': '/Users/prathyushsp/Development/stats/benchmark_20180608_151011_ep11_cpu.json'
+    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_cpu_20180608_170744.json',
+    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_cpu_20180608_171209.json',
+    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_cpu_20180608_171710.json',
+    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_cpu_20180608_181049.json',
+    'EP12 Dataset inbuilt epoch': json_root + 'benchmark_EP12_Dataset_Inbuilt_Epoch_cpu_20180608_181504.json',
+    'EP13 Dataset custom epoch': json_root + 'benchmark_EP13_Dataset_Custom_Epoch_cpu_20180608_181922.json',
+    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_cpu_20180611_122125.json',
+    'EP 15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_cpu_20180611_154107.json'
 }
 
 cpu_gpu_data_dict = {
-    'EP1 Basic Placeholder': '/Users/prathyushsp/Development/stats/benchmark_20180608_155112_ep1_gpu.json',
-    'EP3 Feedable Dataset': '/Users/prathyushsp/Development/stats/benchmark_20180608_143449_ep3_gpu.json',
-    'EP5 Feedable Iterator': '/Users/prathyushsp/Development/stats/benchmark_20180608_145638_ep5_gpu.json',
-    'EP11 ReInitializable Iterator': '/Users/prathyushsp/Development/stats/benchmark_20180608_151831_ep11_gpu.json'
+    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_gpu_20180608_173832.json',
+    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_gpu_20180608_174206.json',
+    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_gpu_20180608_174627.json',
+    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_gpu_20180608_182336.json',
+    'EP12 Dataset inbuilt epoch': json_root + 'benchmark_EP12_Dataset_Inbuilt_Epoch_gpu_20180608_182717.json',
+    'EP13 Dataset custom epoch': json_root + 'benchmark_EP13_Dataset_Custom_Epoch_gpu_20180608_183101.json',
+    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_gpu_20180611_145411.json',
+    'EP 15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_gpu_20180611_154536.json'
 }
 
 # Plotter('', only_cpu_data_dict).plot_cpu_values().show()
-Plotter('', only_cpu_data_dict).plot_all().savefig('plot.png')
+Plotter('', only_cpu_data_dict).plot_all().savefig('plot-cpu.png')
+Plotter('', cpu_gpu_data_dict).plot_all().savefig('plot-gpu.png')
 
 # d = json.load(open('/private/tmp/stats/benchmark_training.json'))
 # cpu_usage = d['monitor_statistics']['gpu_monitor']['cpu_usage_per_second (%/s)']
