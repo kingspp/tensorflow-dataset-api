@@ -21,8 +21,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0" if USE_GPU else ""
 from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
-butil = BenchmarkUtil(model_name='EP14 Feedable Iterator, Multiple Dataset {}'.format(sys.argv[1]), stats_save_path='/tmp/stats/',
-                      monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
+butil = BenchmarkUtil(
+    model_name='EP15 Feedable Iterator, Multiple Dataset, Initializable Iterator {}'.format(sys.argv[1]),
+    stats_save_path='/tmp/stats/',
+    monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
 
 @butil.monitor
