@@ -26,3 +26,18 @@ If facing issues in downloading the MNIST Dataset, use below bash command to upd
 4. EP11
 5. EP12
 6. EP13
+
+
+
+# Steps
+1. Placeholder for Batch Size - For every dataset (Dataset API)
+2. Handle for Iterator Switching (Model Runner / Flow API)
+3. Dataset Creation - (Dataset API)
+4. Initializable Iterator for Dataset - (Dataset API)
+5. Feedable iterator - (Iterator Component API)
+6. Placeholders with Default - (Inbuffer API)
+7. String Handle for iterator (Dataset API)
+8. Create Session (Model Runner / Flow API)
+8. Fetch handle from running string handle (Model Runner / Flow API)
+9. Initialize Iterator (Flow API)
+10. Close Session (Model Runner / Flow API)
