@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export PYTHONPATH=`pwd`/..:$PYTHONPATH
 
 echo "Running EP1"
 python3 -u EP1_Basic_Placeholders.py cpu > logs/ep1_cpu.log ;
