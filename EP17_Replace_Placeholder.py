@@ -60,14 +60,15 @@ def main():
 
     nn_model(features=features_p, labels=labels_p)
 
-    init_all_op = tf.global_variables_initializer()
+    # init_all_op = tf.global_variables_initializer()
 
-    with tf.Session() as sess:
-        # Initializes all the variables.
-        sess.run(init_all_op)
-        # Runs to logit.
-    graph_def = tf.get_default_graph().as_graph_def()
-    # meta_graph_def = tf.train.export_meta_graph()
+    # with tf.Session() as sess:
+    #     # Initializes all the variables.
+    #     sess.run(init_all_op)
+    # Runs to logit.
+    # graph_def = tf.get_default_graph().as_graph_def()
+    meta_graph_def = tf.train.export_meta_graph(clear_devices=True, graph_def=tf.get_default_graph().as_graph_def(),
+                                                clear_extraneous_savers=True)
     tf.reset_default_graph()
 
     # Create Dataset Handle
@@ -96,22 +97,22 @@ def main():
     # Create features and labels
     features, labels = iterator.get_next()
 
-    tf.import_graph_def(graph_def, input_map={'features:0': features, 'labels:0': labels}, name='')
+    # tf.import_graph_def(graph_def, input_map={'features:0': features, 'labels:0': labels}, name='')
 
-    # tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def,
-    #                            input_map={'features:0': features, 'labels:0': labels})
+    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def,
+                               input_map={'features:0': features, 'labels:0': labels})
 
     # Create Handles
     tr_handle = training_iterator.string_handle()
     te_handle = test_iterator.string_handle()
 
     # Create Config Proto
-    config_proto = tf.ConfigProto(log_device_placement=False)
+    config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
     start = time.time()
     # Create Tensorflow Monitored Session
-    sess = tf.Session(config=config_proto)
-    sess.run(['init', tf.global_variables_initializer()])
+    sess = tf.train.MonitoredTrainingSession(config=config_proto)
+    # sess.run(['init', tf.global_variables_initializer()])
 
     # Get Handles
     training_handle = sess.run(tr_handle)
