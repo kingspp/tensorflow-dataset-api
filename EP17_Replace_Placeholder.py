@@ -130,7 +130,7 @@ def main():
         try:
             # Batch For Loop
             while True:
-                _, c = sess.run(['Adam', 'Mean:0'], feed_dict={handle: training_handle},
+                _, c = sess.run(['Adam', 'Sum:0'], feed_dict={handle: training_handle},
                                 options=options,
                                 run_metadata=run_metadata
                                 )
