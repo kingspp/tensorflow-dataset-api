@@ -54,9 +54,8 @@ def main():
         fc2 = tf.layers.dense(fc1, 50)
         fc2 = tf.layers.dropout(fc2)
         fc3 = tf.layers.dense(fc2, 10)
-        loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
-        op1 = tf.train.AdamOptimizer(learning_rate=0.01)
-        optimizer = op1.minimize(loss)
+        loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
         return optimizer, loss
 
     nn_model(features=features_p, labels=labels_p)
