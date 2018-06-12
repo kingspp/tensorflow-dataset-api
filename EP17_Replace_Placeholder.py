@@ -67,7 +67,7 @@ def main():
     #     sess.run(init_all_op)
     # Runs to logit.
     # graph_def = tf.get_default_graph().as_graph_def()
-    meta_graph_def = tf.train.export_meta_graph()#graph_def=tf.get_default_graph().as_graph_def(),clear_extraneous_savers=True)
+    meta_graph_def = tf.train.export_meta_graph()  # graph_def=tf.get_default_graph().as_graph_def(),clear_extraneous_savers=True)
     tf.reset_default_graph()
 
     # Create Dataset Handle
@@ -111,8 +111,8 @@ def main():
     start = time.time()
     # Create Tensorflow Monitored Session
     sess = tf.train.MonitoredTrainingSession(config=config_proto)
-    options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-    run_metadata = tf.RunMetadata()
+    # options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+    # run_metadata = tf.RunMetadata()
 
     # Get Handles
     training_handle = sess.run(tr_handle)
@@ -131,16 +131,16 @@ def main():
             # Batch For Loop
             while True:
                 _, c = sess.run(['Adam', 'Sum:0'], feed_dict={handle: training_handle},
-                                options=options,
-                                run_metadata=run_metadata
+                                # options=options,
+                                # run_metadata=run_metadata
                                 )
                 avg_cost += c / total_batches
                 count += 1
-                fetched_timeline = timeline.Timeline(run_metadata.step_stats)
-                chrome_trace = fetched_timeline.generate_chrome_trace_format()
-                with open('/tmp/timeline.json', 'w') as f:
-                    f.write(chrome_trace)
-                exit()
+                # fetched_timeline = timeline.Timeline(run_metadata.step_stats)
+                # chrome_trace = fetched_timeline.generate_chrome_trace_format()
+                # with open('/tmp/timeline.json', 'w') as f:
+                #     f.write(chrome_trace)
+                # exit()
                 # print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
         except tf.errors.OutOfRangeError:
             if epoch % DISPLAY_STEP == 0:
