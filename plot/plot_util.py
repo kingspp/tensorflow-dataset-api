@@ -50,22 +50,31 @@ class Plotter(object):
             gpu_usage = v['monitor_statistics']['gpu_monitor']['gpu_memory_usage_per_interval (in MiB)'][
                 'GPU-46e22c0b-2df8-c403-0245-d2c523489343']
             plt.plot(range(len(gpu_usage)), gpu_usage, linewidth=2, markersize=3, label=k)
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        # plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         return plt
 
     def plot_time(self):
         plt.title('Time Analysis')
         plt.ylabel('Time Consumption')
         plt.xlabel('Episodes')
+        # count = 0
+        # et = [v['total_elapsed_time (secs)'] for v in self.data_dict.values()]
+        # plt.plot(range(len(et)), et, label='Total Time')
+        # for k, v in self.data_dict.items():
+        #     plt.scatter(count, v['total_elapsed_time (secs)'], label=k)
+        #     count += 1
+
         count = 0
+        et = [v['internal_time'] for v in self.data_dict.values()]
+        plt.plot(range(len(et)), et, label='Internal Time')
         for k, v in self.data_dict.items():
-            plt.scatter(count, v['total_elapsed_time (secs)'], label=k)
+            plt.scatter(count, v['internal_time'], label=k)
             count += 1
-        # plt.legend()
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         return plt
 
     def plot_all(self):
-        plt.figure(figsize=(15, 10))
+        plt.figure(figsize=(25, 20))
         plt.subplot(221)
         self.plot_cpu_values()
         plt.subplot(222)
@@ -82,27 +91,28 @@ class Plotter(object):
         plt.close()
 
 
-json_root = "/Users/prathyushsp/Downloads/logs_and_stats/stats/"
+json_root = "/Users/prathyushsp/Development/logs_stats/stats/"
 only_cpu_data_dict = {
-    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_cpu_20180608_170744.json',
-    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_cpu_20180608_171209.json',
-    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_cpu_20180608_171710.json',
-    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_cpu_20180608_181049.json',
-    'EP12 Dataset inbuilt epoch': json_root + 'benchmark_EP12_Dataset_Inbuilt_Epoch_cpu_20180608_181504.json',
-    'EP13 Dataset custom epoch': json_root + 'benchmark_EP13_Dataset_Custom_Epoch_cpu_20180608_181922.json',
-    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_cpu_20180611_122125.json',
-    'EP 15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_cpu_20180611_154107.json'
+    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_cpu_20180612_165810.json',
+    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_cpu_20180612_170759.json',
+    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_cpu_20180612_171953.json',
+    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_cpu_20180612_172811.json',
+    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_Multiple_Dataset_cpu_20180612_173607.json',
+    # 'EP15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_cpu_20180611_154107.json',
+    'EP17 Replace Placeholder': json_root + 'benchmark_EP17_Replaceable_Placeholder_cpu_20180612_174438.json',
+    'EP19 Feedable Iterator Fetch OP': json_root + 'benchmark_EP19_Feedable_Iterator_Fetch_OP_cpu_20180612_175358.json'
+
 }
 
 cpu_gpu_data_dict = {
-    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_gpu_20180608_173832.json',
-    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_gpu_20180608_174206.json',
-    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_gpu_20180608_174627.json',
-    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_gpu_20180608_182336.json',
-    'EP12 Dataset inbuilt epoch': json_root + 'benchmark_EP12_Dataset_Inbuilt_Epoch_gpu_20180608_182717.json',
-    'EP13 Dataset custom epoch': json_root + 'benchmark_EP13_Dataset_Custom_Epoch_gpu_20180608_183101.json',
-    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_gpu_20180611_145411.json',
-    'EP 15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_gpu_20180611_154536.json'
+    'EP1 Basic Placeholder': json_root + 'benchmark_EP1_Basic_Placeholder_gpu_20180612_170313.json',
+    'EP3 Feedable Dataset': json_root + 'benchmark_EP3_Feedable_Dataset_gpu_20180612_171349.json',
+    'EP5 Feedable Iterator': json_root + 'benchmark_EP5_Feedable_Iterator_gpu_20180612_172416.json',
+    'EP11 ReInitializable Iterator': json_root + 'benchmark_EP11_Reinitializable_iterator_switch_gpu_20180612_173228.json',
+    'EP14 Feedable Iterator MD': json_root + 'benchmark_EP14_Feedable_Iterator_Multiple_Dataset_gpu_20180612_174028.json',
+    # 'EP15 Feedable Iterator MD II': json_root + 'benchmark_EP15_Feedable_Iterator_Multiple_Dataset_Initializable_Iterator_gpu_20180611_154536.json',
+    'EP17 Replace Placeholder': json_root + 'benchmark_EP17_Replaceable_Placeholder_gpu_20180612_174907.json',
+    'EP19 Feedable Iterator Fetch OP': json_root + 'benchmark_EP19_Feedable_Iterator_Fetch_OP_gpu_20180612_175837.json'
 }
 
 # Plotter('', only_cpu_data_dict).plot_cpu_values().show()

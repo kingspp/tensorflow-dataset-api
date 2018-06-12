@@ -89,7 +89,7 @@ def main():
     # Create features and labels
     features, labels = iterator.get_next()
 
-    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def,
+    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def, clear_devices=True,
                                input_map={'features:0': features, 'labels:0': labels})
 
     # Create Handles
@@ -97,7 +97,7 @@ def main():
     te_handle = test_iterator.string_handle()
 
     # Create Config Proto
-    config_proto = tf.ConfigProto(log_device_placement=False)
+    config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
 
     start = time.time()

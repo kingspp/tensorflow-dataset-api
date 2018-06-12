@@ -104,14 +104,14 @@ def main():
 
     tf.reset_default_graph()
 
-    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_data)
+    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_data, clear_devices=True)
     # Create Handles
-    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_model,
+    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_model, clear_devices=True,
                                input_map={'features:0': tf.get_default_graph().get_tensor_by_name('IteratorGetNext:0'),
                                           'labels:0': tf.get_default_graph().get_tensor_by_name("IteratorGetNext:1")})
 
     # Create Config Proto
-    config_proto = tf.ConfigProto(log_device_placement=False)
+    config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
 
     # Create Tensorflow Monitored Session
