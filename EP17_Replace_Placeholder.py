@@ -24,7 +24,7 @@ from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
 butil = BenchmarkUtil(
-    model_name='EP17 Replaceable Placeholder {}'.format(sys.argv[1]),
+    model_name='EP15 Feedable Iterator, Multiple Dataset, Initializable Iterator {}'.format(sys.argv[1]),
     stats_save_path='/tmp/stats/',
     monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
@@ -54,13 +54,20 @@ def main():
         fc2 = tf.layers.dropout(fc2)
         fc3 = tf.layers.dense(fc2, 10)
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
-        optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
+        op1 = tf.train.AdamOptimizer(learning_rate=0.01)
+        optimizer = op1.minimize(loss)
         return optimizer, loss
 
     nn_model(features=features_p, labels=labels_p)
 
-    # graph_def = tf.get_default_graph().as_graph_def()
-    meta_graph_def = tf.train.export_meta_graph()
+    init_all_op = tf.global_variables_initializer()
+
+    with tf.Session() as sess:
+        # Initializes all the variables.
+        sess.run(init_all_op)
+        # Runs to logit.
+    graph_def = tf.get_default_graph().as_graph_def()
+    # meta_graph_def = tf.train.export_meta_graph()
     tf.reset_default_graph()
 
     # Create Dataset Handle
@@ -89,21 +96,22 @@ def main():
     # Create features and labels
     features, labels = iterator.get_next()
 
-    tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def, clear_devices=True,
-                               input_map={'features:0': features, 'labels:0': labels})
+    tf.import_graph_def(graph_def, input_map={'features:0': features, 'labels:0': labels}, name='')
+
+    # tf.train.import_meta_graph(meta_graph_or_file=meta_graph_def,
+    #                            input_map={'features:0': features, 'labels:0': labels})
 
     # Create Handles
     tr_handle = training_iterator.string_handle()
     te_handle = test_iterator.string_handle()
 
     # Create Config Proto
-    config_proto = tf.ConfigProto(log_device_placement=True)
+    config_proto = tf.ConfigProto(log_device_placement=False)
     config_proto.gpu_options.allow_growth = True
-
     start = time.time()
-
     # Create Tensorflow Monitored Session
-    sess = tf.train.MonitoredTrainingSession(config=config_proto)
+    sess = tf.Session(config=config_proto)
+    sess.run(['init', tf.global_variables_initializer()])
 
     # Get Handles
     training_handle = sess.run(tr_handle)
