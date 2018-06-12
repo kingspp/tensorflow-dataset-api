@@ -125,7 +125,7 @@ def main():
                 _, c = sess.run(['Adam', 'Mean:0'], feed_dict={handle: training_handle})
                 avg_cost += c / total_batches
                 count += 1
-                print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
+                # print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
         except tf.errors.OutOfRangeError:
             if epoch % DISPLAY_STEP == 0:
                 print("Epoch:", '%04d' % (epoch + 1), "cost={:.9f}".format(avg_cost))
