@@ -6,8 +6,8 @@
 #python3 -u EP3_Feedable_Dataset.py cpu > logs/ep3_cpu.log ;
 #python3 -u EP3_Feedable_Dataset.py gpu > logs/ep3_gpu.log ;
 #
-python3 -u EP5_Feedable_Iterator.py cpu > logs/ep5_cpu.log ;
-python3 -u EP5_Feedable_Iterator.py gpu > logs/ep5_gpu.log ;
+#python3 -u EP5_Feedable_Iterator.py cpu > logs/ep5_cpu.log ;
+#python3 -u EP5_Feedable_Iterator.py gpu > logs/ep5_gpu.log ;
 #
 #python3 -u EP11_ReInitializable_Iterator_Switch.py cpu > logs/ep11_cpu.log ;
 #python3 -u EP11_ReInitializable_Iterator_Switch.py gpu > logs/ep11_gpu.log ;

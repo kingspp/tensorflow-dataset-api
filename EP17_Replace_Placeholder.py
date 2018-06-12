@@ -25,7 +25,7 @@ from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
 butil = BenchmarkUtil(
-    model_name='EP15 Feedable Iterator, Multiple Dataset, Initializable Iterator {}'.format(sys.argv[1]),
+    model_name='EP17 Replaceable Placeholder {}'.format(sys.argv[1]),
     stats_save_path='/tmp/stats/',
     monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
@@ -151,7 +151,7 @@ def main():
     try:
         sess.run(test_iterator.initializer)
         while True:
-            c = sess.run('Mean:0', feed_dict={handle: test_handle})
+            c = sess.run('Sum:0', feed_dict={handle: test_handle})
             avg_cost += c / int(mnist.test.num_examples / mnist.test.num_examples)
     except tf.errors.OutOfRangeError:
         print("Test :", "cost={:.9f}".format(avg_cost))
