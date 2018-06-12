@@ -37,7 +37,7 @@ def main():
     start = time.time()
 
     # Global Variables
-    EPOCH = 10
+    EPOCH = 100
     BATCH_SIZE = 32
     DISPLAY_STEP = 1
 
@@ -55,8 +55,7 @@ def main():
         fc2 = tf.layers.dropout(fc2)
         fc3 = tf.layers.dense(fc2, 10)
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=fc3))
-        op1 = tf.train.AdamOptimizer(learning_rate=0.01)
-        optimizer = op1.minimize(loss)
+        optimizer = tf.train.AdamOptimizer(learning_rate=0.01).minimize(loss)
         return optimizer, loss
 
     nn_model(features=features_p, labels=labels_p)
@@ -126,7 +125,7 @@ def main():
                 _, c = sess.run(['Adam', 'Mean:0'], feed_dict={handle: training_handle})
                 avg_cost += c / total_batches
                 count += 1
-                # print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
+                print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
         except tf.errors.OutOfRangeError:
             if epoch % DISPLAY_STEP == 0:
                 print("Epoch:", '%04d' % (epoch + 1), "cost={:.9f}".format(avg_cost))
