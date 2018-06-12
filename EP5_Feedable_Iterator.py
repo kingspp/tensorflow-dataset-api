@@ -14,6 +14,7 @@ import os
 import sys
 import json
 import time
+from tensorflow.python.client import timeline
 
 if len(sys.argv) <= 1:
     sys.argv.append('cpu')
@@ -83,6 +84,8 @@ def main():
     config_proto.gpu_options.allow_growth = True
     start = time.time()
     with tf.train.MonitoredTrainingSession(config=config_proto) as sess:
+        options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        run_metadata = tf.RunMetadata()
         sess.run(init_op)
 
         # Create Handles
@@ -92,13 +95,21 @@ def main():
         batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
         while True:
             try:
-                _, c = sess.run([training_op, loss_op], feed_dict={handle: training_handle})
+                _, c = sess.run([training_op, loss_op], feed_dict={handle: training_handle},
+                                options=options,
+                                run_metadata=run_metadata
+                                )
                 avg_cost += c / total_batches
                 if batch_id == total_batches:
                     if epoch_id % DISPLAY_STEP == 0:
                         print("Epoch:", '%04d' % (epoch_id + 1), "cost={:.9f}".format(avg_cost))
                     batch_id, avg_cost, cost = 0, 0, []
                     epoch_id += 1
+                    fetched_timeline = timeline.Timeline(run_metadata.step_stats)
+                    chrome_trace = fetched_timeline.generate_chrome_trace_format()
+                    with open('/tmp/timeline-ep5.json', 'w') as f:
+                        f.write(chrome_trace)
+                    exit()
                 batch_id += 1
             except tf.errors.OutOfRangeError:
                 break

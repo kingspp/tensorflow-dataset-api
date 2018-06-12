@@ -68,7 +68,7 @@ def main():
     #     sess.run(init_all_op)
     # Runs to logit.
     # graph_def = tf.get_default_graph().as_graph_def()
-    meta_graph_def = tf.train.export_meta_graph(clear_devices=True, graph_def=tf.get_default_graph().as_graph_def(),
+    meta_graph_def = tf.train.export_meta_graph(graph_def=tf.get_default_graph().as_graph_def(),
                                                 clear_extraneous_savers=True)
     tf.reset_default_graph()
 
