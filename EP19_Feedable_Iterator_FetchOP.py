@@ -23,7 +23,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0" if USE_GPU else ""
 from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
-butil = BenchmarkUtil(model_name='EP5 Feedable Iterator {}'.format(sys.argv[1]), stats_save_path='/tmp/stats/',
+butil = BenchmarkUtil(model_name='EP19 Feedable Iterator Fetch OP {}'.format(sys.argv[1]),
+                      stats_save_path='/tmp/stats/',
                       monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
 
@@ -92,7 +93,7 @@ def main():
         batch_id, epoch_id, total_batches, avg_cost = 0, 0, int(mnist.train.num_examples / BATCH_SIZE), 0
         while True:
             try:
-                _, c = sess.run([training_op, loss_op], feed_dict={handle: training_handle})
+                _, c, f, l = sess.run([training_op, loss_op, features, labels], feed_dict={handle: training_handle})
                 avg_cost += c / total_batches
                 if batch_id == total_batches:
                     if epoch_id % DISPLAY_STEP == 0:

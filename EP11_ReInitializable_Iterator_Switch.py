@@ -14,6 +14,7 @@
 
 import os
 import sys
+import json
 
 if len(sys.argv) <= 1:
     sys.argv.append('cpu')
@@ -23,7 +24,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0" if USE_GPU else ""
 from benchmark.benchmark import BenchmarkUtil
 from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 
-butil = BenchmarkUtil(model_name='EP11 Reinitializable_iterator_switch {}'.format(sys.argv[1]), stats_save_path='/tmp/stats/',
+butil = BenchmarkUtil(model_name='EP11 Reinitializable_iterator_switch {}'.format(sys.argv[1]),
+                      stats_save_path='/tmp/stats/',
                       monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
 
@@ -33,8 +35,6 @@ def main():
     import tensorflow as tf
     from tensorflow.examples.tutorials.mnist import input_data
     import time
-
-    start = time.time()
 
     # Global Variables
     EPOCH = 100
@@ -83,7 +83,7 @@ def main():
 
     config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
-
+    start = time.time()
     with tf.train.MonitoredTrainingSession(config=config_proto) as sess:
         sess.run(init_op)
         sess.run(train_init_op)
@@ -112,6 +112,7 @@ def main():
         print("Validation :", "cost={:.9f}".format(avg_cost))
 
     print('Total Time Elapsed: {} secs'.format(time.time() - start))
+    json.dump({'internal_time': time.time() - start}, open('/tmp/time.json', 'w'))
 
 
 if __name__ == '__main__':

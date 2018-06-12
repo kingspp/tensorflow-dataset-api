@@ -47,6 +47,10 @@ class BenchmarkStats(object):
         self.total_elapsed_time = None
         self.monitor_statistics = OrderedDict()
         self.timestamp = generate_timestamp()
+        self.internal_time = None
+
+    def set_internal_time(self, t):
+        self.internal_time = t
 
     def get_timestamp(self):
         return self.timestamp
@@ -85,7 +89,8 @@ class BenchmarkStats(object):
             ('function_name', self.function_name),
             ('function_annotations', self.function_annotations),
             ('total_elapsed_time (secs)', self.total_elapsed_time),
-            ('monitor_statistics', self.monitor_statistics)
+            ('monitor_statistics', self.monitor_statistics),
+            ('internal_time', self.internal_time)
         ])
 
 
@@ -192,7 +197,8 @@ class BenchmarkUtil(object):
                 b_stats.set_monitor_statistics(self._collect_monitor_stats())
                 b_stats.set_total_elapsed_time(time.time() - start)
                 fname = self.stats_save_path + '/benchmark_{}_{}.json'.format(
-                              b_stats.get_benchmark_name().replace(' ', '_'), b_stats.get_timestamp())
+                    b_stats.get_benchmark_name().replace(' ', '_'), b_stats.get_timestamp())
+                b_stats.set_internal_time(json.load(open('/tmp/time.json'))['internal_time'])
                 json.dump(b_stats.info(),
                           open(fname, 'w'), indent=2)
                 print('Benchmark Util - Training completed successfully. Results stored at: {}'.format(fname))

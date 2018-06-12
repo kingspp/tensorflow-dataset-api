@@ -12,6 +12,7 @@
 """
 import os
 import sys
+import json
 
 if len(sys.argv) <= 1:
     sys.argv.append('cpu')
@@ -31,8 +32,6 @@ def main():
     import tensorflow as tf
     from tensorflow.examples.tutorials.mnist import input_data
     import time
-
-    start = time.time()
 
     # Global Variables
     EPOCH = 100
@@ -62,7 +61,7 @@ def main():
 
     config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
-
+    start = time.time()
     with tf.Session(config=config_proto) as sess:
         sess.run(init_op)
         total_batches = int(mnist.train.num_examples / BATCH_SIZE)
@@ -89,6 +88,7 @@ def main():
         print("Validation :", "cost={:.9f}".format(avg_cost))
 
     print('Total Time Elapsed: {} secs'.format(time.time() - start))
+    json.dump({'internal_time': time.time() - start}, open('/tmp/time.json', 'w'))
 
 
 if __name__ == '__main__':

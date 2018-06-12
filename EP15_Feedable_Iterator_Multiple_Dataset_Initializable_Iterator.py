@@ -13,6 +13,7 @@
 import os
 import sys
 import time
+import json
 
 if len(sys.argv) <= 1:
     sys.argv.append('cpu')
@@ -24,7 +25,7 @@ from benchmark.system_monitors import CPUMonitor, MemoryMonitor, GPUMonitor
 import random
 
 butil = BenchmarkUtil(
-    model_name='EP15 Feedable Iterator, Multiple Dataset, Initializable Iterator {}'.format(sys.argv[1]),
+    model_name='EP15 Feedable Iterator Multiple Dataset Initializable Iterator {}'.format(sys.argv[1]),
     stats_save_path='/tmp/stats/',
     monitors=[CPUMonitor, MemoryMonitor, GPUMonitor])
 
@@ -34,12 +35,9 @@ def main():
     # Imports
     import tensorflow as tf
     from tensorflow.examples.tutorials.mnist import input_data
-    import time
-
-    start = time.time()
 
     # Global Variables
-    EPOCH = 10
+    EPOCH = 100
     BATCH_SIZE = 32
     bs_placeholder = tf.placeholder(dtype=tf.int64)
     DISPLAY_STEP = 1
@@ -137,6 +135,7 @@ def main():
     config_proto = tf.ConfigProto(log_device_placement=True)
     config_proto.gpu_options.allow_growth = True
 
+    start = time.time()
     # Create Tensorflow Monitored Session
     sess = tf.train.MonitoredTrainingSession(config=config_proto)
 
@@ -192,6 +191,7 @@ def main():
     print('Total Time Elapsed: {} secs'.format(time.time() - start))
 
     sess.close()
+    json.dump({'internal_time': time.time() - start}, open('/tmp/time.json', 'w'))
 
 
 if __name__ == '__main__':

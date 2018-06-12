@@ -24,8 +24,10 @@ If facing issues in downloading the MNIST Dataset, use below bash command to upd
 2. EP3
 3. EP5
 4. EP11
-5. EP12
-6. EP13
+5. EP14
+6. EP15
+7. EP17
+8. EP19
 
 
 
