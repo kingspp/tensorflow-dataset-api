@@ -14,6 +14,7 @@ import os
 import sys
 import time
 import json
+from tensorflow.python.client import timeline
 
 if len(sys.argv) <= 1:
     sys.argv.append('cpu')
@@ -112,7 +113,8 @@ def main():
     start = time.time()
     # Create Tensorflow Monitored Session
     sess = tf.train.MonitoredTrainingSession(config=config_proto)
-    # sess.run(['init', tf.global_variables_initializer()])
+    options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+    run_metadata = tf.RunMetadata()
 
     # Get Handles
     training_handle = sess.run(tr_handle)
@@ -130,9 +132,17 @@ def main():
         try:
             # Batch For Loop
             while True:
-                _, c = sess.run(['Adam', 'Mean:0'], feed_dict={handle: training_handle})
+                _, c = sess.run(['Adam', 'Mean:0'], feed_dict={handle: training_handle},
+                                options=options,
+                                run_metadata=run_metadata
+                                )
                 avg_cost += c / total_batches
                 count += 1
+                fetched_timeline = timeline.Timeline(run_metadata.step_stats)
+                chrome_trace = fetched_timeline.generate_chrome_trace_format()
+                with open('/tmp/timeline.json', 'w') as f:
+                    f.write(chrome_trace)
+                exit()
                 # print("Batch:", '%04d' % (count), "cost={:.9f}".format(c))
         except tf.errors.OutOfRangeError:
             if epoch % DISPLAY_STEP == 0:
