@@ -84,11 +84,11 @@ with tf.train.MonitoredTrainingSession() as sess:
                       "cost={:.9f}, manual={} ema={}, tensor_avg={}, tensor_avg_not_init={}".format(
                           avg_cost, sum(avg_cost_manual) / len(avg_cost_manual), a, tavg, tni))
                 sess.run([var_init])
-                cost_plots['Algorithm Based Average'].append(avg_cost)
-                cost_plots['Exponential Moving Average'].append(a)
-                cost_plots['Manual Average'].append(sum(avg_cost_manual) / len(avg_cost_manual))
-                cost_plots['Tensor Average'].append(tavg)
-                cost_plots['Tensor Average without Init'].append(tni)
+                cost_plots['Algorithm Based Average'].append(float(avg_cost))
+                cost_plots['Exponential Moving Average'].append(float(a))
+                cost_plots['Manual Average'].append(float(sum(avg_cost_manual) / len(avg_cost_manual)))
+                cost_plots['Tensor Average'].append(float(tavg))
+                cost_plots['Tensor Average without Init'].append(float(tni))
             batch_id, avg_cost, avg_cost_manual, cost = 0, 0, [], []
             epoch_id += 1
         batch_id += 1
@@ -96,4 +96,4 @@ with tf.train.MonitoredTrainingSession() as sess:
 
 print('Total Time Elapsed: {} secs'.format(time.time() - start))
 
-json.dump(cost_plots, open('/tmp/cost_vals.json'))
+json.dump(cost_plots, open('/tmp/cost_vals.json', 'w'))
