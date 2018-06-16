@@ -34,7 +34,7 @@ def main():
     label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 
     # Create Dataset
-    dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
+    dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE)
 
     # Create Dataset Iterator
     iterator = dataset.make_initializable_iterator()
