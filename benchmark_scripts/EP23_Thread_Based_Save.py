@@ -5,7 +5,7 @@
 | **@version:** v0.0.1
 |
 | **Description:**
-| Feedable Dataset
+| Thread Based Save
 |
 | **Sphinx Documentation Status:** Complete
 |
@@ -29,13 +29,9 @@ def saver_fn(i, session: tf.Session, saver: tf.train.Saver):
 
 @butil.monitor
 def main():
-    # Create Placeholders
-    features_placeholder = tf.placeholder(mnist.train.images.dtype, [None, mnist.train.images.shape[-1]])
-    labels_placeholder = tf.placeholder(mnist.train.labels.dtype, [None, mnist.train.labels.shape[-1]])
-
     # Create Tensor slices from placeholders
-    train_dataset = tf.data.Dataset.from_tensor_slices(features_placeholder)
-    label_dataset = tf.data.Dataset.from_tensor_slices(labels_placeholder)
+    train_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.images)
+    label_dataset = tf.data.Dataset.from_tensor_slices(mnist.train.labels)
 
     # Create Dataset
     dataset = tf.data.Dataset.zip((train_dataset, label_dataset)).batch(BATCH_SIZE).repeat(EPOCH)
