@@ -52,7 +52,7 @@ def main():
     threads = []
     saver = tf.train.Saver()
     start = time.time()
-    with tf.Session() as sess:
+    with tf.Session(config=config_proto) as sess:
         sess.run(init_op)
         batch_id, total_batches, avg_cost = 0, int(mnist.train.num_examples / BATCH_SIZE), 0
         for i in range(EPOCH):
