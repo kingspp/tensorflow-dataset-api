@@ -24,7 +24,7 @@ THREADS_ENABLED = True
 
 def saver_fn(i, session: tf.Session, saver: tf.train.Saver):
     print('Saving Session {}. . .'.format(i))
-    saver.save(session, '/tmp/new_save', global_step=i)
+    saver.save(session, '/tmp/new_save/checkpoint', global_step=i)
 
 
 @butil.monitor
@@ -66,7 +66,7 @@ def main():
                         threads[-1].start()
                     else:
                         print('Saving Session {}. . .'.format(i))
-                        saver.save(sess, '/tmp/new_save', global_step=i)
+                        saver.save(sess, '/tmp/new_save/checkpoint', global_step=i)
                 batch_id, avg_cost, cost = 0, 0, []
 
         print("Optimization Finished!")
